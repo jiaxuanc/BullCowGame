@@ -15,7 +15,7 @@ int main()
 	do {
 		PrintIntro();
 		PlayGame();
-	} while (AskToPlayAgain());
+	} while (AskToPlayAgain());	// enables the player to play as many times as he/she wants
 
 	return 0;	// exit the application
 }
@@ -34,14 +34,20 @@ void PrintIntro()
 
 void PlayGame()
 {
-
+	BCGame.Reset();
 	// loop for the number of turns asking for guesses
 	int MaxTries = BCGame.GetMaxTries();
 	for (int i = 1; i <= MaxTries; i++) {
-		std::string Guess = GetGuess();
+		std::string Guess = GetGuess();		// TODO check validity of the guess
+
+		// submit valid guess to the game
+		// print number of bulls and cows
+		// continue the game if guess is wrong within max # of tries
 		std::cout << "Your guess was: " << Guess << std::endl;
 		std::cout << std::endl;
 	}
+	
+	// TODO summarize game
 
 	return;
 }
@@ -63,6 +69,6 @@ bool AskToPlayAgain()
 {
 	std::cout << "Would you like to play again? (y/n) ";
 	std::string Response = "";
-	std::getline(std::cin, Response);
+	std::getline(std::cin, Response);	// TODO check validity of the response
 	return (Response[0] == 'y') || (Response[0] == 'Y');
 }
