@@ -73,7 +73,8 @@ FText GetValidGuess()
 	do {
 		// get a guess from the player
 		int32 CurrentTries = BCGame.GetCurrentTry();
-		std::cout << "Try " << CurrentTries << ". Please enter your guess: ";
+		std::cout << "Try " << CurrentTries << " of " << BCGame.GetMaxTries();
+		std::cout << ". Please enter your guess: ";
 		std::getline(std::cin, Guess);	// read through spaces, and discard the input stream once it reaches the new-line character
 									// better than std::cin >> Guess, as this will not work properly 
 									// if there are spaces between words, like "apple pen"
@@ -82,19 +83,18 @@ FText GetValidGuess()
 		switch (Status)
 		{
 		case EGuessStatus::Wrong_Length:
-			std::cout << "Please enter a " << BCGame.GetHiddenWordLength() << " letter word.\n";
+			std::cout << "Please enter a " << BCGame.GetHiddenWordLength() << " letter word.\n\n";
 			break;
 		case EGuessStatus::Not_Isogram:
-			std::cout << "Please enter a word without repeating letters.\n";
+			std::cout << "Please enter a word without repeating letters.\n\n";
 			break;
 		case EGuessStatus::Not_Lowercase:
-			std::cout << "Please enter all lowercase letters.\n";
+			std::cout << "Please enter all lowercase letters.\n\n";
 			break;
 		default:
 			// assume the guess is valid
 			break;
 		}
-		std::cout << std::endl;
 	} while (Status != EGuessStatus::OK);	// keep looping until we get no errors
 	return Guess;
 }
