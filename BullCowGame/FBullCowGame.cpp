@@ -1,18 +1,22 @@
+#pragma once
 #include "FBullCowGame.h"
 #include <map>
-#define TMap std::map
 
+// to make syntax Unreal friendly
+#define TMap std::map
 using int32 = int;
 
-FBullCowGame::FBullCowGame()
-{
-	Reset();
-}
+FBullCowGame::FBullCowGame() { Reset(); }	// default constructor
 
-int32 FBullCowGame::GetMaxTries() const { return MyMaxTries; }
 int32 FBullCowGame::GetCurrentTry() const { return MyCurrentTry; }
 int32 FBullCowGame::GetHiddenWordLength() const { return MyHiddenWord.length(); }
 bool FBullCowGame::IsGameWon() const { return bGameIsWon; }
+
+int32 FBullCowGame::GetMaxTries() const 
+{ 
+	TMap<int32, int32> WordLengthToMaxTries{ {3,4}, {4,7}, {5,10}, {6,16}, {7,20} };
+	return WordLengthToMaxTries[MyHiddenWord.length()];
+}
 
 EGuessStatus FBullCowGame::CheckGuessValidity(FString Guess) const
 {
@@ -21,16 +25,15 @@ EGuessStatus FBullCowGame::CheckGuessValidity(FString Guess) const
 	else if (Guess.length() != GetHiddenWordLength()) { return EGuessStatus::Wrong_Length; } // if the guess length is wrong
 	else { return EGuessStatus::OK; }														// otherwise
 	
-	return EGuessStatus::OK;		// TODO make actual error
+	return EGuessStatus::OK;		
 }
 
 void FBullCowGame::Reset()
 {
-	constexpr int32 MAX_TRIES = 5;
-	const FString HIDDEN_WORD = "ant";		// constexpr must have a literal type or a reference type
-	
-	MyMaxTries = MAX_TRIES;
+	// constexpr must have a literal type or a reference type
+	const FString HIDDEN_WORD = "ant";		// this MUST be an isogram
 	MyHiddenWord = HIDDEN_WORD;
+
 	MyCurrentTry = 1;
 	bGameIsWon = false;
 	return;

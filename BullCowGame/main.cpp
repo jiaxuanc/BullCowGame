@@ -1,23 +1,25 @@
-/* This is the console executable, that makes use of the FBullCowGame class.
+/* This is the console executable, that makes use of the FBullCowGame class
 This acts as the view in a MVC pattern, and is responsbile for all user
 interaction. For game logic see the FBullCowGame class.
 */
-
+#pragma once
 
 #include <iostream>
 #include <string>
 #include "FBullCowGame.h"
 
+// to make syntax Unreal friendly
 using FText = std::string;
 using int32 = int;
 
+// function prototypes as outside a class
 void PrintIntro();
 void PlayGame();
 FText GetValidGuess();
 bool AskToPlayAgain();
 void PrintGameSummary();
 
-FBullCowGame BCGame;	// instantiate a new game
+FBullCowGame BCGame;	// instantiate a new game, which we re-use across plays
 
 // the entry point of the application
 int main() 
@@ -27,11 +29,9 @@ int main()
 		PlayGame();
 	} while (AskToPlayAgain());	// enables the player to play as many times as he/she wants
 
-	return 0;	// exit the application
+	return 0;					// exit the application
 }
 
-
-// introduce the game
 void PrintIntro()
 {
 	std::cout << "\n\nWelcome to Bulls and Cows, a fun word game. \n";
@@ -41,6 +41,7 @@ void PrintIntro()
 	return;
 }
 
+// plays a single game to completion
 void PlayGame()
 {
 	BCGame.Reset();
@@ -54,7 +55,7 @@ void PlayGame()
 
 		// submit valid guess to the game, and receive counts
 		FBullCowCount BullCowCount = BCGame.SubmitValidGuess(Guess);
-		// print number of bulls and cows
+	
 		std::cout << "Bulls = " << BullCowCount.Bulls;
 		std::cout << ". Cows = " << BullCowCount.Cows << std::endl;
 		
@@ -76,9 +77,9 @@ FText GetValidGuess()
 		std::cout << "Try " << CurrentTries << " of " << BCGame.GetMaxTries();
 		std::cout << ". Please enter your guess: ";
 		std::getline(std::cin, Guess);	// read through spaces, and discard the input stream once it reaches the new-line character
-									// better than std::cin >> Guess, as this will not work properly 
-									// if there are spaces between words, like "apple pen"
-
+										// better than std::cin >> Guess, as this will not work properly 
+										// if there are spaces between words, like "apple pen"
+		// check status and give feedback
 		Status = BCGame.CheckGuessValidity(Guess);
 		switch (Status)
 		{
@@ -102,7 +103,7 @@ FText GetValidGuess()
 
 bool AskToPlayAgain()
 {
-	std::cout << "Would you like to play again with the same hidden word? (y/n) ";
+	std::cout << "\nWould you like to play again with the same hidden word? (y/n) ";
 	FText Response = "";
 	std::getline(std::cin, Response);	// TODO check validity of the response
 	return (Response[0] == 'y') || (Response[0] == 'Y');
@@ -113,3 +114,4 @@ void PrintGameSummary()
 	if (BCGame.IsGameWon()) { std::cout << "WELL DONE - YOU WIN!\n"; }
 	else { std::cout << "Better luck next time!\n"; }
 }
+
