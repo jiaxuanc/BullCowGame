@@ -14,27 +14,41 @@ using int32 = int;
 
 // function prototypes as outside a class
 void PrintIntro();
-void PlayGame();
+void PlayGame(EResetStatus);
 FText GetValidGuess();
-bool AskToPlayAgain();
+EResetStatus AskToPlayAgain();
 void PrintGameSummary();
 
 FBullCowGame BCGame;	// instantiate a new game, which we re-use across plays
 
 // the entry point of the application
 int main() 
-{
+{	
+	PrintIntro();
+	EResetStatus eReset = EResetStatus::Init_Hidden_Word;
 	do {
-		PrintIntro();
-		PlayGame();
-	} while (AskToPlayAgain());	// enables the player to play as many times as he/she wants
+		// TODO add a function to choose difficulty level etc
+		PlayGame(eReset);
+		eReset = AskToPlayAgain();
+	} while ( eReset != EResetStatus::Exit);	// enables the player to play as many times as he/she wants with same or different words
 
-	return 0;					// exit the application
+	return 0;									// exit the application
 }
 
+// TODO add more instructions and ASCII art
 void PrintIntro()
 {
 	std::cout << "\n\nWelcome to Bulls and Cows, a fun word game. \n";
+	std::cout << R"(
+ ____   __ __  _      _     _____      ____  ____   ___           __   ___   __    __  _____
+|    \ |  |  || |    | |   / ___/     /    ||    \ |   \         /  ] /   \ |  |__|  |/ ___/
+|  o  )|  |  || |    | |  (   \_     |  o  ||  _  ||    \       /  / |     ||  |  |  (   \_ 
+|     ||  |  || |___ | |___\__  |    |     ||  |  ||  D  |     /  /  |  O  ||  |  |  |\__  |
+|  O  ||  :  ||     ||     /  \ |    |  _  ||  |  ||     |    /   \_ |     ||  `  '  |/  \ |
+|     ||     ||     ||     \    |    |  |  ||  |  ||     |    \     ||     | \      / \    |
+|_____| \__,_||_____||_____|\___|    |__|__||__|__||_____|     \____| \___/   \_/\_/   \___|
+                                                                                            
+)" << std::endl;
 	std::cout << "Can you guess the " << BCGame.GetHiddenWordLength();
 	std::cout << " letter isogram I'm thinking of?\n";
 	std::cout << std::endl;
@@ -42,9 +56,9 @@ void PrintIntro()
 }
 
 // plays a single game to completion
-void PlayGame()
+void PlayGame(EResetStatus eResetStatus)
 {
-	BCGame.Reset();
+	BCGame.Reset(eResetStatus);
 	int32 MaxTries = BCGame.GetMaxTries();
 
 	// loop asking for guesses while the game
@@ -84,13 +98,13 @@ FText GetValidGuess()
 		switch (Status)
 		{
 		case EGuessStatus::Wrong_Length:
-			std::cout << "Please enter a " << BCGame.GetHiddenWordLength() << " letter word.\n\n";
+			std::cout << "Please enter a " << BCGame.GetHiddenWordLength() << " letter word. (¨s¡ã¡õ¡ã£©¨s¦à ©ß©¥©ß \n\n";
 			break;
 		case EGuessStatus::Not_Isogram:
-			std::cout << "Please enter a word without repeating letters.\n\n";
+			std::cout << "Please enter a word without repeating letters. (¨s¡ã¡õ¡ã£©¨s¦à ©ß©¥©ß\n\n";
 			break;
 		case EGuessStatus::Not_Lowercase:
-			std::cout << "Please enter all lowercase letters.\n\n";
+			std::cout << "Please enter all lowercase letters. (¨s¡ã¡õ¡ã£©¨s¦à ©ß©¥©ß\n\n";
 			break;
 		default:
 			// assume the guess is valid
@@ -101,14 +115,39 @@ FText GetValidGuess()
 }
 
 
-bool AskToPlayAgain()
+EResetStatus AskToPlayAgain()
 {
-	std::cout << "\nWould you like to play again with the same hidden word? (y/n) ";
+	std::cout << "\nWould you like to play again? Three options: \n";
+	std::cout << "  1 = Yes, I want to play with the same word again.\n";
+	std::cout << "  2 = Yes, but I want to play with a different word. \n";
+	std::cout << "  3 = No, I want to quit. \n";
+	EResetStatus Status = EResetStatus::Invalid_Status;
 	FText Response = "";
-	std::getline(std::cin, Response);	// TODO check validity of the response
-	return (Response[0] == 'y') || (Response[0] == 'Y');
+
+	do {
+		std::cout << "Please enter your choice out of the three options (1-3): ";
+		std::getline(std::cin, Response);
+		
+		switch (Response[0])
+		{
+		case '1':
+			Status = EResetStatus::Same_Hidden_Word;
+			break;
+		case '2':
+			Status = EResetStatus::Diff_Hidden_Word;
+			break;
+		case '3':
+			Status = EResetStatus::Exit;
+			break;
+		default:
+			// assume the response is invalid - not a number between 1 to 3
+			break;
+		};
+	} while (Status == EResetStatus::Invalid_Status);	// keep looping until we get a valid choice
+	return Status;
 }
 
+// TODO add ASCII art
 void PrintGameSummary()
 {
 	if (BCGame.IsGameWon()) { std::cout << "WELL DONE - YOU WIN!\n"; }

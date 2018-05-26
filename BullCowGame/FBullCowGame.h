@@ -29,8 +29,11 @@ enum class EGuessStatus
 
 enum class EResetStatus
 {
-	No_Hidden_Word,
-	OK
+	Invalid_Status,
+	Init_Hidden_Word,
+	Same_Hidden_Word,
+	Diff_Hidden_Word,
+	Exit
 };
 
 class FBullCowGame 
@@ -44,7 +47,7 @@ public:
 	bool IsGameWon() const;
 	EGuessStatus CheckGuessValidity(FString) const; 
 
-	void Reset(); 
+	void Reset(EResetStatus);
 	FBullCowCount SubmitValidGuess(FString);
 
 private:
@@ -53,6 +56,7 @@ private:
 	FString MyHiddenWord;
 	bool bGameIsWon;
 
+	FString GenerateHiddenWord(bool);
 	bool IsIsogram(FString) const;
 	bool IsLowercase(FString) const;
 };

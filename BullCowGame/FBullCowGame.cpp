@@ -6,7 +6,7 @@
 #define TMap std::map
 using int32 = int;
 
-FBullCowGame::FBullCowGame() { Reset(); }	// default constructor
+FBullCowGame::FBullCowGame() { Reset(EResetStatus::Init_Hidden_Word); }	   // default constructor
 
 int32 FBullCowGame::GetCurrentTry() const { return MyCurrentTry; }
 int32 FBullCowGame::GetHiddenWordLength() const { return MyHiddenWord.length(); }
@@ -20,19 +20,19 @@ int32 FBullCowGame::GetMaxTries() const
 
 EGuessStatus FBullCowGame::CheckGuessValidity(FString Guess) const
 {
-	if (!IsIsogram(Guess)) { return EGuessStatus::Not_Isogram; }							// if the guess isn't an isogram
-	else if (!IsLowercase(Guess)) { return EGuessStatus::Not_Lowercase;	}					// if the guess isn't all lowercase
+	if (!IsIsogram(Guess)) { return EGuessStatus::Not_Isogram; }			// if the guess isn't an isogram
+	else if (!IsLowercase(Guess)) { return EGuessStatus::Not_Lowercase; } // if the guess length is wrong
 	else if (Guess.length() != GetHiddenWordLength()) { return EGuessStatus::Wrong_Length; } // if the guess length is wrong
-	else { return EGuessStatus::OK; }														// otherwise
+	else { return EGuessStatus::OK; }		// otherwise
 	
 	return EGuessStatus::OK;		
 }
 
-void FBullCowGame::Reset()
+void FBullCowGame::Reset(EResetStatus)
 {
-	// constexpr must have a literal type or a reference type
-	const FString HIDDEN_WORD = "ant";		// this MUST be an isogram
-	MyHiddenWord = HIDDEN_WORD;
+	// initialize a word
+	// TODO handle different reset scenarios
+	MyHiddenWord = GenerateHiddenWord(true);
 
 	MyCurrentTry = 1;
 	bGameIsWon = false;
@@ -89,5 +89,16 @@ bool FBullCowGame::IsLowercase(FString Word) const
 	}
 
 	return true;
+}
+
+
+FString FBullCowGame::GenerateHiddenWord(bool)
+{
+	// randomly generate a hidden word from dictionary map
+	// constexpr must have a literal type or a reference type
+	// this MUST be an isogram
+	const FString HIDDEN_WORD = "ant";		// TODO dictionary map
+	
+	return HIDDEN_WORD;
 }
 
