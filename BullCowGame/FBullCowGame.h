@@ -10,18 +10,11 @@ The game is a simple guess the word game based on Mastermind
 using FString = std::string;
 using int32 = int;
 
-// all values intialized to 0
-struct FBullCowCount 
-{
-	int32 Bulls = 0;
-	int32 Cows = 0;
-};
-
 // strongly-typed enum
 enum class EGuessStatus
 {
 	Invalid_Status,
-	OK, 
+	OK,
 	Not_Isogram,
 	Wrong_Length,
 	Not_Lowercase
@@ -30,10 +23,23 @@ enum class EGuessStatus
 enum class EResetStatus
 {
 	Invalid_Status,
-	Init_Hidden_Word,
-	Same_Hidden_Word,
-	Diff_Hidden_Word,
+	Set_Hidden_Word,
 	Exit
+};
+
+// all values intialized to 0
+struct FBullCowCount 
+{
+	int32 Bulls = 0;
+	int32 Cows = 0;
+};
+
+struct FDiffLevel
+{	
+	// TODO initialize
+	int32 WordLength = 0;
+	// int32 MaxTries = 0;
+	// int32 NumHints = 0;
 };
 
 class FBullCowGame 
@@ -47,7 +53,7 @@ public:
 	bool IsGameWon() const;
 	EGuessStatus CheckGuessValidity(FString) const; 
 
-	void Reset(EResetStatus);
+	void Reset(FDiffLevel);
 	FBullCowCount SubmitValidGuess(FString);
 
 private:
@@ -56,7 +62,7 @@ private:
 	FString MyHiddenWord;
 	bool bGameIsWon;
 
-	FString GenerateHiddenWord(bool);
+	FString GenerateHiddenWord(int32);
 	bool IsIsogram(FString) const;
 	bool IsLowercase(FString) const;
 };
