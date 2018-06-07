@@ -6,11 +6,52 @@
 #define TMap std::map
 using int32 = int;
 
-FBullCowGame::FBullCowGame() { Reset(EResetStatus::Init_Hidden_Word); }	   // default constructor
+FBullCowGame::FBullCowGame() { Reset({ 3 }); }	   // default constructor
 
 int32 FBullCowGame::GetCurrentTry() const { return MyCurrentTry; }
 int32 FBullCowGame::GetHiddenWordLength() const { return MyHiddenWord.length(); }
 bool FBullCowGame::IsGameWon() const { return bGameIsWon; }
+
+void FBullCowGame::Reset(FDiffLevel DiffLevel)
+{
+	// initialize a word
+	// TODO handle different reset scenarios
+
+	MyHiddenWord = GenerateHiddenWord(DiffLevel.WordLength);
+	// TODO maxTries
+
+	MyCurrentTry = 1;
+	bGameIsWon = false;
+	return;
+}
+
+FString FBullCowGame::GenerateHiddenWord(int32 WordLength)
+{
+	// randomly generate a hidden word from dictionary map
+	// constexpr must have a literal type or a reference type
+	// this MUST be an isogram
+	FString HIDDEN_WORD;		// TODO word bank
+	switch (WordLength)
+	{
+	case 3:
+		HIDDEN_WORD = "bug";
+		break;
+	case 4:
+		HIDDEN_WORD = "team";
+		break;
+	case 5:
+		HIDDEN_WORD = "smile";
+		break;
+	case 6:
+		HIDDEN_WORD = "window";
+		break;
+	case 7:
+		HIDDEN_WORD = "project";
+		break;
+	}
+
+	return HIDDEN_WORD;
+}
 
 int32 FBullCowGame::GetMaxTries() const 
 { 
@@ -26,17 +67,6 @@ EGuessStatus FBullCowGame::CheckGuessValidity(FString Guess) const
 	else { return EGuessStatus::OK; }		// otherwise
 	
 	return EGuessStatus::OK;		
-}
-
-void FBullCowGame::Reset(EResetStatus)
-{
-	// initialize a word
-	// TODO handle different reset scenarios
-	MyHiddenWord = GenerateHiddenWord(true);
-
-	MyCurrentTry = 1;
-	bGameIsWon = false;
-	return;
 }
 
 // receives a VALID guess, increments turn, and return count
@@ -89,16 +119,5 @@ bool FBullCowGame::IsLowercase(FString Word) const
 	}
 
 	return true;
-}
-
-
-FString FBullCowGame::GenerateHiddenWord(bool)
-{
-	// randomly generate a hidden word from dictionary map
-	// constexpr must have a literal type or a reference type
-	// this MUST be an isogram
-	const FString HIDDEN_WORD = "ant";		// TODO dictionary map
-	
-	return HIDDEN_WORD;
 }
 
